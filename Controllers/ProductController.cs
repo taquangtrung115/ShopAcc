@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopAccBE.Data;
 using ShopAccBE.Model;
+using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAcc.Controllers
 {
@@ -20,14 +21,15 @@ namespace ShopAcc.Controllers
         {
             var lstProduct = await _dataContext.Product.ToListAsync();
             var APIModel = new APIModel<Product>();
+            APIModel.Status = StatusApi.E_FAILED.ToString();
             if (lstProduct != null)
             {
-                APIModel.Message = "Success";
+                APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 APIModel.Data = lstProduct;
             }
             else
             {
-                APIModel.Message = "Failed";
+                APIModel.Status = StatusApi.E_FAILED.ToString();
             }
             return Ok(APIModel);
         }
@@ -48,18 +50,20 @@ namespace ShopAcc.Controllers
         public async Task<ActionResult<APIModel<Product>>> Add(Product product)
         {
             var APIModel = new APIModel<Product>();
-            APIModel.Message = "Failed";
+            APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
+                product.ID = Guid.NewGuid();
+                product.IsDelete = null;
                 _dataContext.Add(product);
                 await _dataContext.SaveChangesAsync();
                 APIModel.Data = await _dataContext.Product.ToListAsync();
-                APIModel.Message = "Success";
+                APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return Ok(APIModel);
             }
             catch (Exception ex)
             {
-                APIModel.Status = ex.ToString();
+                APIModel.Message = ex.Message.ToString();
                 return Ok(APIModel);
             }
         }
@@ -67,24 +71,20 @@ namespace ShopAcc.Controllers
         public async Task<ActionResult<APIModel<Product>>> Update(Product product)
         {
             var APIModel = new APIModel<Product>();
-            APIModel.Message = "Failed";
+            APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
                 var dbProduct = await _dataContext.Product.Where(s => s.ID == product.ID).FirstOrDefaultAsync();
                 if (dbProduct == null)
                     return Ok(APIModel);
-                dbProduct.Name = product.Name;
-                dbProduct.YearCreate = product.YearCreate;
-                dbProduct.Amount = product.Amount;
-                dbProduct.Price = product.Price;
                 await _dataContext.SaveChangesAsync();
                 APIModel.Data = new List<Product> { dbProduct };
-                APIModel.Message = "Success";
+                APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return Ok(APIModel);
             }
             catch (Exception ex)
             {
-                APIModel.Status = ex.ToString();
+                APIModel.Message = ex.Message.ToString();
                 return Ok(APIModel);
             }
 
@@ -93,7 +93,7 @@ namespace ShopAcc.Controllers
         public async Task<ActionResult<APIModel<Product>>> Delete(Guid id)
         {
             var APIModel = new APIModel<Product>();
-            APIModel.Message = "Failed";
+            APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
                 var dbProduct = await _dataContext.Product.Where(s => s.ID == id).FirstOrDefaultAsync();
@@ -101,13 +101,13 @@ namespace ShopAcc.Controllers
                     return Ok(APIModel);
                 _dataContext.Product.Remove(dbProduct);
                 await _dataContext.SaveChangesAsync();
-                APIModel.Message = "Success";
+                APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 APIModel.Data = await _dataContext.Product.ToListAsync();
                 return Ok(APIModel);
             }
             catch (Exception ex)
             {
-                APIModel.Status = ex.ToString();
+                APIModel.Message = ex.Message.ToString();
                 return Ok(APIModel);
             }
             

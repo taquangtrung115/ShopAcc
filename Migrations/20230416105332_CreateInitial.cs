@@ -22,8 +22,6 @@ namespace ShopAccBE.Migrations
                     AdminName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateUpdate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ActionStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
@@ -36,18 +34,14 @@ namespace ShopAccBE.Migrations
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Price = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Amount = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: true),
+                    Amount = table.Column<double>(type: "float", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     YearCreate = table.Column<int>(type: "int", nullable: true),
-                    TotalFriend = table.Column<int>(type: "int", nullable: true),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateUpdate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ActionStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
@@ -62,15 +56,11 @@ namespace ShopAccBE.Migrations
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserLogin = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasssWordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasssWordSalth = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     DateUpdate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserUpdate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ActionStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
