@@ -57,6 +57,7 @@ namespace ShopAccBE.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserLogin = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "bit", nullable: false),
                     PasssWordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasssWordSalth = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     DateUpdate = table.Column<DateTime>(type: "datetime2", nullable: true),

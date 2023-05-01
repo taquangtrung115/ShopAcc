@@ -12,7 +12,7 @@ using ShopAccBE.Data;
 namespace ShopAccBE.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230416105332_CreateInitial")]
+    [Migration("20230501131259_CreateInitial")]
     partial class CreateInitial
     {
         /// <inheritdoc />
@@ -112,6 +112,9 @@ namespace ShopAccBE.Migrations
 
                     b.Property<DateTime?>("DateUpdate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");

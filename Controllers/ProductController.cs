@@ -7,7 +7,7 @@ using static ShopAccBE.Data.EnumConstant;
 namespace ShopAcc.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/product")]
     public class ProductController : ControllerBase
     {
         private readonly DataContext _dataContext;
