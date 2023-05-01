@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using ShopAccBE.Data;
@@ -12,7 +13,7 @@ using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAccBE.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -32,21 +33,34 @@ namespace ShopAccBE.Controllers
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                CreatePassWordHash(user.Password, out byte[] passWordHash, out byte[] passWordSalt);
-                var userInfo = new UserInfo();
-                userInfo.ID = Guid.NewGuid();
-                userInfo.DateUpdate = DateTime.Now;
-                userInfo.UserUpdate = user.UserLogin;
-                userInfo.IsDelete = null;
-                userInfo.PasssWordHash = passWordHash;
-                userInfo.PasssWordSalth = passWordSalt;
-                userInfo.UserLogin = user.UserLogin;
-                _dataContext.Add(userInfo);
-                await _dataContext.SaveChangesAsync();
+                var userDB = await _dataContext.UserInfo.Where(s => s.UserLogin == user.UserLogin && s.IsDelete == null || s.IsDelete == false).FirstOrDefaultAsync();
+                if (userDB != null)
+                {
+                    //Có user trong DB
+                    APIModel.Data = new List<UserInfo> { userDB };
+                    APIModel.Status = StatusApi.E_FAILED.ToString();
+                    return Ok(APIModel);
+                }
+                else
+                {
+                    CreatePassWordHash(user.Password, out byte[] passWordHash, out byte[] passWordSalt);
+                    var userInfo = new UserInfo();
+                    userInfo.ID = Guid.NewGuid();
+                    userInfo.DateUpdate = DateTime.Now;
+                    userInfo.UserUpdate = user.UserLogin;
+                    userInfo.IsDelete = null;
+                    userInfo.UserName = user.UserLogin;
+                    userInfo.PasssWordHash = passWordHash;
+                    userInfo.PasssWordSalth = passWordSalt;
+                    userInfo.UserLogin = user.UserLogin;
+                    _dataContext.Add(userInfo);
+                    await _dataContext.SaveChangesAsync();
 
-                APIModel.Status = StatusApi.E_SUCCESSED.ToString();
-                APIModel.Data = new List<UserInfo> { userInfo };
-                return Ok(APIModel);
+                    APIModel.Status = StatusApi.E_SUCCESSED.ToString();
+                    APIModel.Data = new List<UserInfo> { userInfo };
+                    return Ok(APIModel);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -91,21 +105,33 @@ namespace ShopAccBE.Controllers
             return jwt;
         }
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDTO user)
+        public async Task<ActionResult<APIModel<UserInfo>>> Login(UserDTO user)
         {
-            var userDB = await _dataContext.UserInfo.Where(s => s.UserLogin == user.UserLogin).FirstOrDefaultAsync();
+            var APIModel = new APIModel<UserInfo>();
+            APIModel.Status = StatusApi.E_FAILED.ToString();
+            var userDB = await _dataContext.UserInfo.Where(s => s.UserLogin == user.UserLogin && s.IsDelete == null || s.IsDelete == false).FirstOrDefaultAsync();
             if (userDB == null)
-                return "Login Failed";
+            {
+                APIModel.Message = "LoginNotUser";
+                return Ok(APIModel);
+            }
 
             if (user.UserLogin != userDB.UserLogin)
-                return BadRequest("Login Failed");
+            {
+                APIModel.Message = "LoginFailedUserName";
+                return Ok(APIModel);
+            }
 
             if (!VerifyPasswordHash(user.Password, userDB.PasssWordHash, userDB.PasssWordSalth))
             {
-                return BadRequest("Failed Password");
+                APIModel.Message = "LoginFailedPassword";
+                return Ok(APIModel);
             }
+            APIModel.Status = StatusApi.E_SUCCESSED.ToString();
             string token = CreateToken(userDB);
-            return Ok(token);
+            APIModel.Message = token;
+            APIModel.Data = new List<UserInfo> { userDB };
+            return Ok(APIModel);
         }
     }
 }
