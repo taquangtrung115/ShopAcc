@@ -1,8 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Hosting;
 using ShopAccBE.Data;
 using ShopAccBE.Model;
 using static ShopAccBE.Data.EnumConstant;
+using System.Text.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System.Dynamic;
+using static System.Net.Mime.MediaTypeNames;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using ShopAccBE.Business;
 
 namespace ShopAcc.Controllers
 {
@@ -111,6 +120,51 @@ namespace ShopAcc.Controllers
                 return Ok(APIModel);
             }
             
+        }
+        [HttpPost("import")]
+        public async Task<ActionResult<APIModel<Product>>> Import(List<object> lstObjProduct)
+        {
+            var APIModel = new APIModel<Product>();
+            APIModel.Status = StatusApi.E_FAILED.ToString();
+            try
+            {
+                if (lstObjProduct != null)
+                {
+                    var services = new ProductServices();
+                    var lstProduct = services.Import(lstObjProduct);
+                    if (lstProduct != null && lstProduct.Count > 0)
+                    {
+                        var lstProductReturn = new List<Product>();
+                        foreach (var product in lstProduct)
+                        {
+                            var productSave = new Product();
+                            productSave.ID = Guid.NewGuid();
+                            productSave.IsDelete = null;
+                            productSave.DateUpdate = DateTime.Now;
+                            productSave.Amount = product.Amount;
+                            productSave.Price = product.Price;
+                            productSave.Description = product.Description;
+                            productSave.YearCreate = product.YearCreate;
+                            productSave.Title = product.Title;
+                            productSave.ProductName = product.ProductName;
+
+                            _dataContext.Add(productSave);
+                            await _dataContext.SaveChangesAsync();
+                            lstProductReturn.Add(productSave);
+                        }
+                        APIModel.Data = lstProductReturn;
+
+                        APIModel.Status = StatusApi.E_SUCCESSED.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                APIModel.Message = ex.Message.ToString();
+                return Ok(APIModel);
+            }
+            
+            return Ok(APIModel);
         }
     }
 }
