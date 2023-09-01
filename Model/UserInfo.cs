@@ -2,6 +2,7 @@
 {
     public class UserInfo : BaseModel
     {
+        public Guid? OrgStructureID { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string UserLogin { get; set; }
         public string Phone { get; set; } = string.Empty;
