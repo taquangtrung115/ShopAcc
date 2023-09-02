@@ -4,39 +4,39 @@ using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAccBE.Business
 {
-    public class ShiftServices
+    public class LeaveDayServices
     {
         private readonly DataContext _dataContext;
-        public ShiftServices(DataContext dataContext)
+        public LeaveDayServices(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
         #region Get Raw Data
-        public APIModel<Shift> GetListShiftAPI()
+        public APIModel<LeaveDay> GetListLeaveDayAPI()
         {
-            var apiModel = new APIModel<Shift>();
-            apiModel.Data = GetListShiftRawData();
+            var apiModel = new APIModel<LeaveDay>();
+            apiModel.Data = GetListLeaveDayRawData();
             apiModel.Status = StatusApi.E_SUCCESSED.ToString();
             return apiModel;
         }
-        public List<Shift> GetListShiftRawData()
+        public List<LeaveDay> GetListLeaveDayRawData()
         {
-            return _dataContext.Shift.ToList();
+            return _dataContext.LeaveDay.ToList();
         }
         #endregion
 
         #region Action Shift
-        public APIModel<Shift> Add(Shift shift)
+        public APIModel<LeaveDay> Add(LeaveDay leaveDay)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<LeaveDay>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                shift.ID = Guid.NewGuid();
-                shift.IsDelete = null;
-                _dataContext.Add(shift);
+                leaveDay.ID = Guid.NewGuid();
+                leaveDay.IsDelete = null;
+                _dataContext.Add(leaveDay);
                 _dataContext.SaveChanges();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListLeaveDayRawData();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -46,12 +46,12 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public Shift GetByID(Guid id)
+        public LeaveDay GetByID(Guid id)
         {
-            var product = new Shift();
+            var product = new LeaveDay();
             if (id != Guid.Empty)
             {
-                product = _dataContext.Shift.Where(s => s.ID == id).FirstOrDefault();
+                product = _dataContext.LeaveDay.Where(s => s.ID == id).FirstOrDefault();
                 return product;
             }
             else
@@ -59,17 +59,17 @@ namespace ShopAccBE.Business
                 return null;
             }
         }
-        public APIModel<Shift> Update(Shift shift)
+        public APIModel<LeaveDay> Update(LeaveDay leaveDay)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<LeaveDay>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = _dataContext.Shift.Where(s => s.ID == shift.ID).FirstOrDefault();
-                if (dbShift == null)
+                var dbLeaveDay = _dataContext.LeaveDay.Where(s => s.ID == leaveDay.ID).FirstOrDefault();
+                if (dbLeaveDay == null)
                     return APIModel;
                 _dataContext.SaveChanges();
-                APIModel.Data = new List<Shift> { dbShift };
+                APIModel.Data = new List<LeaveDay> { dbLeaveDay };
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -79,19 +79,19 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public APIModel<Shift> Delete(Guid id)
+        public APIModel<LeaveDay> Delete(Guid id)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<LeaveDay>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = GetByID(id);
-                if (dbShift == null)
+                var dbLeaveDay = GetByID(id);
+                if (dbLeaveDay == null)
                     return APIModel;
-                _dataContext.Shift.Remove(dbShift);
+                _dataContext.LeaveDay.Remove(dbLeaveDay);
                 _dataContext.SaveChanges();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListLeaveDayRawData();
                 return APIModel;
             }
             catch (Exception ex)
@@ -101,6 +101,5 @@ namespace ShopAccBE.Business
             }
         }
         #endregion
-
     }
 }

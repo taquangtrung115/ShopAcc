@@ -4,39 +4,39 @@ using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAccBE.Business
 {
-    public class ShiftServices
+    public class DayOffServices
     {
         private readonly DataContext _dataContext;
-        public ShiftServices(DataContext dataContext)
+        public DayOffServices(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
-        #region Get Raw Data
-        public APIModel<Shift> GetListShiftAPI()
+        #region Get Day Off Raw Data
+        public List<DayOff> GetListDayOffRawData()
         {
-            var apiModel = new APIModel<Shift>();
-            apiModel.Data = GetListShiftRawData();
-            apiModel.Status = StatusApi.E_SUCCESSED.ToString();
-            return apiModel;
+            return _dataContext.DayOff.ToList();
         }
-        public List<Shift> GetListShiftRawData()
+        public APIModel<DayOff> GetListDayOffAPI()
         {
-            return _dataContext.Shift.ToList();
+            APIModel<DayOff> api = new APIModel<DayOff>();
+            api.Status = StatusApi.E_SUCCESSED.ToString();
+            api.Data = GetListDayOffRawData();
+            return api;
         }
         #endregion
 
-        #region Action Shift
-        public APIModel<Shift> Add(Shift shift)
+        #region Action Day Off
+        public APIModel<DayOff> Add(DayOff dayOff)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<DayOff>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                shift.ID = Guid.NewGuid();
-                shift.IsDelete = null;
-                _dataContext.Add(shift);
+                dayOff.ID = Guid.NewGuid();
+                dayOff.IsDelete = null;
+                _dataContext.Add(dayOff);
                 _dataContext.SaveChanges();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListDayOffRawData();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -46,12 +46,12 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public Shift GetByID(Guid id)
+        public DayOff GetByID(Guid id)
         {
-            var product = new Shift();
+            var product = new DayOff();
             if (id != Guid.Empty)
             {
-                product = _dataContext.Shift.Where(s => s.ID == id).FirstOrDefault();
+                product = _dataContext.DayOff.Where(s => s.ID == id).FirstOrDefault();
                 return product;
             }
             else
@@ -59,17 +59,17 @@ namespace ShopAccBE.Business
                 return null;
             }
         }
-        public APIModel<Shift> Update(Shift shift)
+        public APIModel<DayOff> Update(DayOff roster)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<DayOff>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = _dataContext.Shift.Where(s => s.ID == shift.ID).FirstOrDefault();
-                if (dbShift == null)
+                var dbDayOff = _dataContext.DayOff.Where(s => s.ID == roster.ID).FirstOrDefault();
+                if (dbDayOff == null)
                     return APIModel;
                 _dataContext.SaveChanges();
-                APIModel.Data = new List<Shift> { dbShift };
+                APIModel.Data = new List<DayOff> { dbDayOff };
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -79,19 +79,19 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public APIModel<Shift> Delete(Guid id)
+        public APIModel<DayOff> Delete(Guid id)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<DayOff>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = GetByID(id);
-                if (dbShift == null)
+                var dbDayOff = GetByID(id);
+                if (dbDayOff == null)
                     return APIModel;
-                _dataContext.Shift.Remove(dbShift);
+                _dataContext.DayOff.Remove(dbDayOff);
                 _dataContext.SaveChanges();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListDayOffRawData();
                 return APIModel;
             }
             catch (Exception ex)
@@ -101,6 +101,5 @@ namespace ShopAccBE.Business
             }
         }
         #endregion
-
     }
 }

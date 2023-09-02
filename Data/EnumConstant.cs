@@ -41,7 +41,7 @@ namespace ShopAccBE.Data
         #endregion
 
         #region Overt Time
-        public enum OverTimeType
+        public enum OverTimeDurationType
         {
             //OT 100%
             E_OT_100,
