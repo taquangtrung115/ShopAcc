@@ -4,39 +4,39 @@ using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAccBE.Business
 {
-    public class ShiftServices
+    public class RosterServices
     {
         private readonly DataContext _dataContext;
-        public ShiftServices(DataContext dataContext)
+        public RosterServices(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
-        #region Get Raw Data
-        public APIModel<Shift> GetListShiftAPI()
+        #region Get List
+        public List<Roster> GetListRosterRawData()
         {
-            var apiModel = new APIModel<Shift>();
-            apiModel.Data = GetListShiftRawData();
-            apiModel.Status = StatusApi.E_SUCCESSED.ToString();
-            return apiModel;
+            return _dataContext.Roster.ToList();
         }
-        public List<Shift> GetListShiftRawData()
+        public APIModel<Roster> GetListRosterAPI()
         {
-            return _dataContext.Shift.ToList();
+            var apiModel = new APIModel<Roster>();
+            apiModel.Status = StatusApi.E_SUCCESSED.ToString();
+            apiModel.Data = GetListRosterRawData();
+            return apiModel;
         }
         #endregion
 
-        #region Action Shift
-        public APIModel<Shift> Add(Shift shift)
+        #region Action Roster
+        public APIModel<Roster> Add(Roster roster)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<Roster>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                shift.ID = Guid.NewGuid();
-                shift.IsDelete = null;
-                _dataContext.Add(shift);
+                roster.ID = Guid.NewGuid();
+                roster.IsDelete = null;
+                _dataContext.Add(roster);
                 _dataContext.SaveChanges();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListRosterRawData();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -46,12 +46,12 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public Shift GetByID(Guid id)
+        public Roster GetByID(Guid id)
         {
-            var product = new Shift();
+            var product = new Roster();
             if (id != Guid.Empty)
             {
-                product = _dataContext.Shift.Where(s => s.ID == id).FirstOrDefault();
+                product = _dataContext.Roster.Where(s => s.ID == id).FirstOrDefault();
                 return product;
             }
             else
@@ -59,17 +59,17 @@ namespace ShopAccBE.Business
                 return null;
             }
         }
-        public APIModel<Shift> Update(Shift shift)
+        public APIModel<Roster> Update(Roster roster)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<Roster>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = _dataContext.Shift.Where(s => s.ID == shift.ID).FirstOrDefault();
-                if (dbShift == null)
+                var dbRoster = _dataContext.Roster.Where(s => s.ID == roster.ID).FirstOrDefault();
+                if (dbRoster == null)
                     return APIModel;
                 _dataContext.SaveChanges();
-                APIModel.Data = new List<Shift> { dbShift };
+                APIModel.Data = new List<Roster> { dbRoster };
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -79,19 +79,19 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public APIModel<Shift> Delete(Guid id)
+        public APIModel<Roster> Delete(Guid id)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<Roster>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = GetByID(id);
-                if (dbShift == null)
+                var dbRoster = GetByID(id);
+                if (dbRoster == null)
                     return APIModel;
-                _dataContext.Shift.Remove(dbShift);
+                _dataContext.Roster.Remove(dbRoster);
                 _dataContext.SaveChanges();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListRosterRawData();
                 return APIModel;
             }
             catch (Exception ex)
@@ -101,6 +101,5 @@ namespace ShopAccBE.Business
             }
         }
         #endregion
-
     }
 }

@@ -4,39 +4,39 @@ using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAccBE.Business
 {
-    public class ShiftServices
+    public class OverTimeServices
     {
         private readonly DataContext _dataContext;
-        public ShiftServices(DataContext dataContext)
+        public OverTimeServices(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
-        #region Get Raw Data
-        public APIModel<Shift> GetListShiftAPI()
+        #region Get Day Off Raw Data
+        public List<OverTime> GetListOverTimeRawData()
         {
-            var apiModel = new APIModel<Shift>();
-            apiModel.Data = GetListShiftRawData();
-            apiModel.Status = StatusApi.E_SUCCESSED.ToString();
-            return apiModel;
+            return _dataContext.OverTime.ToList();
         }
-        public List<Shift> GetListShiftRawData()
+        public APIModel<OverTime> GetListOverTimeAPI()
         {
-            return _dataContext.Shift.ToList();
+            APIModel<OverTime> api = new APIModel<OverTime>();
+            api.Status = StatusApi.E_SUCCESSED.ToString();
+            api.Data = GetListOverTimeRawData();
+            return api;
         }
         #endregion
 
-        #region Action Shift
-        public APIModel<Shift> Add(Shift shift)
+        #region Action Day Off
+        public APIModel<OverTime> Add(OverTime ot)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<OverTime>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                shift.ID = Guid.NewGuid();
-                shift.IsDelete = null;
-                _dataContext.Add(shift);
+                ot.ID = Guid.NewGuid();
+                ot.IsDelete = null;
+                _dataContext.Add(ot);
                 _dataContext.SaveChanges();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListOverTimeRawData();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -46,12 +46,12 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public Shift GetByID(Guid id)
+        public OverTime GetByID(Guid id)
         {
-            var product = new Shift();
+            var product = new OverTime();
             if (id != Guid.Empty)
             {
-                product = _dataContext.Shift.Where(s => s.ID == id).FirstOrDefault();
+                product = _dataContext.OverTime.Where(s => s.ID == id).FirstOrDefault();
                 return product;
             }
             else
@@ -59,17 +59,17 @@ namespace ShopAccBE.Business
                 return null;
             }
         }
-        public APIModel<Shift> Update(Shift shift)
+        public APIModel<OverTime> Update(OverTime ot)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<OverTime>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = _dataContext.Shift.Where(s => s.ID == shift.ID).FirstOrDefault();
-                if (dbShift == null)
+                var dbDayOff = _dataContext.OverTime.Where(s => s.ID == ot.ID).FirstOrDefault();
+                if (dbDayOff == null)
                     return APIModel;
                 _dataContext.SaveChanges();
-                APIModel.Data = new List<Shift> { dbShift };
+                APIModel.Data = new List<OverTime> { dbDayOff };
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
                 return APIModel;
             }
@@ -79,19 +79,19 @@ namespace ShopAccBE.Business
                 return APIModel;
             }
         }
-        public APIModel<Shift> Delete(Guid id)
+        public APIModel<OverTime> Delete(Guid id)
         {
-            var APIModel = new APIModel<Shift>();
+            var APIModel = new APIModel<OverTime>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
             try
             {
-                var dbShift = GetByID(id);
-                if (dbShift == null)
+                var dbDayOff = GetByID(id);
+                if (dbDayOff == null)
                     return APIModel;
-                _dataContext.Shift.Remove(dbShift);
+                _dataContext.OverTime.Remove(dbDayOff);
                 _dataContext.SaveChanges();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();
-                APIModel.Data = GetListShiftRawData();
+                APIModel.Data = GetListOverTimeRawData();
                 return APIModel;
             }
             catch (Exception ex)
@@ -101,6 +101,5 @@ namespace ShopAccBE.Business
             }
         }
         #endregion
-
     }
 }
