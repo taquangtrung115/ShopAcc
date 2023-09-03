@@ -9,7 +9,21 @@ namespace ShopAccBE.Data
             E_SUCCESSED,
             E_FAILED
         }
-
+        public enum ValidateCode
+        {
+            //model null
+            E_NULL,
+        }
+        public enum Major
+        {
+            E_SHIFT,
+            E_ROSTER,
+            E_LEAVEDAY_TYPE,
+            E_LEAVEDAY,
+            E_OVERTIME_TYPE,
+            E_OVERTIME,
+            E_DAYOFF,
+        }
         #region Enum Core
         #region Roster
         public enum RosterType
@@ -57,5 +71,15 @@ namespace ShopAccBE.Data
         #endregion
         #endregion
 
+    }
+    public class ConstantText
+    {
+        public static string E_ROSTER = "Roster";
+        public static string E_SHIFT = "Shift";
+        public static string E_LEAVEDAY_TYPE = "LeaveDayType";
+        public static string E_LEAVEDAY = "LeaveDay";
+        public static string E_OVERTIME_TYPE = "OverTimeType";
+        public static string E_OVERTIME = "OverTime";
+        public static string E_DAYOFF = "DayOff";
     }
 }

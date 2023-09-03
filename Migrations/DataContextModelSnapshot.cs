@@ -424,11 +424,11 @@ namespace ShopAccBE.Migrations
                     b.Property<DateTime>("BreakInTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("BreakOutTime")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("BreakOutTime")
+                        .HasColumnType("datetime2");
 
-                    b.Property<double>("CoOut")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("CoOut")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Code")
                         .IsRequired()
