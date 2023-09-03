@@ -1,5 +1,6 @@
 ﻿using ShopAccBE.Data;
 using ShopAccBE.Model;
+using ShopAccBE.ModelParse;
 using static ShopAccBE.Data.EnumConstant;
 
 namespace ShopAccBE.Business
@@ -25,16 +26,76 @@ namespace ShopAccBE.Business
         }
         #endregion
 
+        #region Get Hour and Minute
+        public List<int> GetHourAndMinute(string time)
+        {
+            var lstInt = new List<int>();
+            int hour = 0;
+            int minute = 0;
+
+            if (!string.IsNullOrEmpty(time))
+            {
+                lstInt.Add(hour);
+                lstInt.Add(minute);
+                return lstInt;
+            }
+
+            var lstTime = time.Split(":");
+            int.TryParse(lstTime[0], out hour);
+            int.TryParse(lstTime[1], out minute);
+            lstInt.Add(hour);
+            lstInt.Add(minute);
+            return lstInt;
+        }
+        #endregion
+
         #region Action Shift
-        public APIModel<Shift> Add(Shift shift)
+        public APIModel<Shift> Add(ShiftModel shift)
         {
             var APIModel = new APIModel<Shift>();
             APIModel.Status = StatusApi.E_FAILED.ToString();
+
+            #region Validate
+            var messValidate = BaseServices.Validate<ShiftModel>(shift);
+            if (!string.IsNullOrEmpty(messValidate))
+            {
+                APIModel.Message = messValidate;
+                return APIModel;
+            }
+            #endregion
             try
             {
-                shift.ID = Guid.NewGuid();
-                shift.IsDelete = null;
-                _dataContext.Add(shift);
+                var dateNow = DateTime.Now.Date;
+                var shiftSave = new Shift();
+
+                shiftSave.WorkHours = shift.WorkHours;
+                shiftSave.IsNightShift = shift.IsNightShift;
+
+                #region In and Out and Break
+                #region In Time
+                var hourAndMinutesIn = GetHourAndMinute(shift.InTime);
+                shiftSave.InTime = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, hourAndMinutesIn[0], hourAndMinutesIn[1], 0);
+                #endregion
+
+                #region Out Time
+                var hourAndMinutesOut = GetHourAndMinute(shift.CoOut);
+                shiftSave.CoOut = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, hourAndMinutesOut[0], hourAndMinutesOut[1], 0);
+                #endregion
+
+                #region Break In Time
+                var hourAndMinutesBreakIn = GetHourAndMinute(shift.BreakInTime);
+                shiftSave.BreakInTime = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, hourAndMinutesBreakIn[0], hourAndMinutesBreakIn[1], 0);
+                #endregion
+
+                #region Break Out Time
+                var hourAndMinutesBreakOut = GetHourAndMinute(shift.BreakOutTime);
+                shiftSave.BreakOutTime = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, hourAndMinutesBreakOut[0], hourAndMinutesBreakOut[1], 0);
+                #endregion
+                #endregion
+
+                BaseServices.UpdateFieldBase<Shift>(shift);
+
+                _dataContext.Add(shiftSave);
                 _dataContext.SaveChanges();
                 APIModel.Data = GetListShiftRawData();
                 APIModel.Status = StatusApi.E_SUCCESSED.ToString();

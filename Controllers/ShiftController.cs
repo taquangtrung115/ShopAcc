@@ -12,6 +12,7 @@ using System.Dynamic;
 using static System.Net.Mime.MediaTypeNames;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using ShopAccBE.Business;
+using ShopAccBE.ModelParse;
 
 namespace ShopAcc.Controllers
 {
@@ -39,7 +40,7 @@ namespace ShopAcc.Controllers
             return Ok(_services.GetByID(id));
         }
         [HttpPost]
-        public ActionResult<APIModel<Shift>> Add(Shift shift)
+        public ActionResult<APIModel<Shift>> Add(ShiftModel shift)
         {
             var APIModel = _services.Add(shift);
             return Ok(APIModel);

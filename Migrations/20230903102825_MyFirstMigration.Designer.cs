@@ -12,7 +12,7 @@ using ShopAccBE.Data;
 namespace ShopAccBE.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230901152717_MyFirstMigration")]
+    [Migration("20230903102825_MyFirstMigration")]
     partial class MyFirstMigration
     {
         /// <inheritdoc />
@@ -427,11 +427,11 @@ namespace ShopAccBE.Migrations
                     b.Property<DateTime>("BreakInTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("BreakOutTime")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("BreakOutTime")
+                        .HasColumnType("datetime2");
 
-                    b.Property<double>("CoOut")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("CoOut")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Code")
                         .IsRequired()
