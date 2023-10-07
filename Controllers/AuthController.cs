@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using ShopAccBE.Business;
 using ShopAccBE.Data;
+using ShopAccBE.Data.Models;
 using ShopAccBE.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,15 +19,7 @@ namespace ShopAccBE.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataContext _dataContext;
-        private readonly UserServices userServices;
-        public AuthController(IConfiguration configuration, DataContext dataContext)
-        {
-            _configuration = configuration;
-            _dataContext = dataContext;
-            userServices = new UserServices(_dataContext, _configuration);
-        }
+        public UserServices userServices = new UserServices();
         #region Register and Login
         [HttpPost("register")]
         public ActionResult<APIModel<UserInfo>> Register(UserDTO user)
@@ -35,7 +28,7 @@ namespace ShopAccBE.Controllers
             return Ok(APIModel);
         }
         [HttpPost("login")]
-        public ActionResult<APIModel<UserInfo>> Login(UserDTO user)
+        public ActionResult<APIModel<UserInfo>> Login(UserLoginModel user)
         {
             var APIModel = userServices.Login(user);
             return Ok(APIModel);
