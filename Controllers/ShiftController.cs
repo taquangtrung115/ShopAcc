@@ -12,7 +12,7 @@ using System.Dynamic;
 using static System.Net.Mime.MediaTypeNames;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using ShopAccBE.Business;
-using ShopAccBE.Data.Models;
+using ShopAccBE.ModelParse;
 
 namespace ShopAcc.Controllers
 {

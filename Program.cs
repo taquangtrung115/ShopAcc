@@ -1,4 +1,3 @@
-using Data.Core;
 using Microsoft.EntityFrameworkCore;
 using ShopAccBE.Data;
 
@@ -21,8 +20,6 @@ builder.Services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =
 }));
 
 builder.Services.AddMvc();
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
